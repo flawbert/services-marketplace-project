@@ -14,16 +14,14 @@ export const getAvailability = async (req, res) => {
 };
 export const setAvailability = async (req, res) => {
   const providerId = req.provider.id;
-  const { schedule } = req.body; // array de { day_of_week, start_time, end_time }
+  const { schedule } = req.body;
 
   const client = await db.getClient();
   try {
     await client.query('BEGIN');
 
-    // 1. Deleta a agenda antiga do prestador
     await client.query('DELETE FROM provider_availability WHERE provider_id = $1', [providerId]);
 
-    // 2. Insere a nova agenda
     const insertQuery = `
       INSERT INTO provider_availability (provider_id, day_of_week, start_time, end_time)
       VALUES ($1, $2, $3, $4)
